@@ -23,6 +23,9 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private GameObject enterButton;
 
+    private string upData = "";
+    private string downData = "";
+
     // System.IO
     private StreamWriter sw;
     //アプリケーションのパス
@@ -74,33 +77,31 @@ public class Manager : MonoBehaviour
         {
             upImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Right/" + image[imageIndex]);
             downImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Left/" + image[imageIndex]);
+            upData = "right";
+            downData = "left";
         }
         else
         {
             downImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Right/" + image[imageIndex]);
             upImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Left/" + image[imageIndex]);
+            upData = "left";
+            downData = "right";
         }
     }
 
     private void SaveData(){
         float time = (endTime - startTime);
         if(key == "space"){
-            key = "down";
+            key = downData;
         }
         else if(key == "enter"){
-            key = "up";
+            key = upData;
         }
-        string[] s1 = { time.ToString(), key};
-        string s2 = string.Join(",", s1);
-        SaveToFile(s2);
-    }
+        string[] s1 = { time.ToString(), key, image[imageIndex].ToString()};
 
-    private void SaveToFile(string content)
-    {
-        var filePath = Path.Combine(Application.streamingAssetsPath, name + ".csv");
-        using (var writer = new StreamWriter(filePath, true))
+        using (var writer = new StreamWriter(Path.Combine(Application.streamingAssetsPath, name + ".csv"), true))
         {
-            writer.WriteLine(content);
+            writer.WriteLine(string.Join(",", s1));
             Debug.Log("Saved");
         }
     }
