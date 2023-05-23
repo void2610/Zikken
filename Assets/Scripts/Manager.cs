@@ -178,7 +178,7 @@ public class Manager : MonoBehaviour
                     SaveData();
 
                     //imageIndexが9になったら終了
-                    if (imageIndex >= 8)
+                    if (imageIndex >= 7)
                     {
                         ChangeState(State.End);
                         break;
