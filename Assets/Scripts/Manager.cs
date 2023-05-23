@@ -49,7 +49,7 @@ public class Manager : MonoBehaviour
     private string name = "none";
 
     //要素数9のint配列
-    private int[] image = new int[9];
+    private int[] image = new int[8];
     private int imageIndex = 0;
 
     private void ChangeState(State s){
@@ -79,24 +79,25 @@ public class Manager : MonoBehaviour
     }
 
     private void SetImage(){
+        Debug.Log(image[imageIndex]);
+        int n = image[imageIndex];
         if(Random.value < 0.5f)
         {
-            upImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Right/" + image[imageIndex]);
-            downImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Left/" + image[imageIndex]);
+            upImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Right/" + n);
+            downImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Left/" + n);
             upData = "right";
             downData = "left";
         }
         else
         {
-            downImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Right/" + image[imageIndex]);
-            upImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Left/" + image[imageIndex]);
+            downImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Right/" + n);
+            upImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Left/" + n);
             upData = "left";
             downData = "right";
         }
     }
 
     private void SaveData(){
-        Debug.Log(imageIndex);
         float time = (endTime - startTime);
         if(key == "space"){
             key = downData;
@@ -104,7 +105,7 @@ public class Manager : MonoBehaviour
         else if(key == "enter"){
             key = upData;
         }
-        string[] s1 = { time.ToString(), key, image[imageIndex].ToString()};
+        string[] s1 = { time.ToString(), key, image[imageIndex-1].ToString()};
 
         using (var writer = new StreamWriter(Path.Combine(Application.streamingAssetsPath, name + ".csv"), true))
         {
@@ -118,7 +119,7 @@ public class Manager : MonoBehaviour
         //image配列に1~9の数字を被りなく、ランダムに代入
         for (int i = 0; i < image.Length; i++)
         {
-            image[i] = Random.Range(1, 10);
+            image[i] = Random.Range(1, 9);
             for (int j = 0; j < i; j++)
             {
                 if (image[i] == image[j])
@@ -160,7 +161,7 @@ public class Manager : MonoBehaviour
                     stateEnter = false;
 
                     SetImage();
-                    //imageIndex++;
+                    imageIndex++;
                     startTime = Time.time;
                 }
 
@@ -178,7 +179,7 @@ public class Manager : MonoBehaviour
                     SaveData();
 
                     //imageIndexが9になったら終了
-                    if (imageIndex >= 7)
+                    if (imageIndex >= 8)
                     {
                         ChangeState(State.End);
                         break;
