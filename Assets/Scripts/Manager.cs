@@ -31,6 +31,8 @@ public class Manager : MonoBehaviour
     //アプリケーションのパス
     private string path;
 
+    bool stateEnter = true;
+
     public enum State
     {
         EnterName,
@@ -48,7 +50,12 @@ public class Manager : MonoBehaviour
 
     //要素数9のint配列
     private int[] image = new int[9];
-    private int imageIndex = -1;
+    private int imageIndex = 0;
+
+    private void ChangeState(State s){
+        state = s;
+        stateEnter = true;
+    }
 
     public void OnClickEnterButton(){
         state = State.Introduction;
@@ -72,7 +79,6 @@ public class Manager : MonoBehaviour
     }
 
     private void SetImage(){
-        Debug.Log(imageIndex);
         if(Random.value < 0.5f)
         {
             upImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Right/" + image[imageIndex]);
@@ -90,6 +96,7 @@ public class Manager : MonoBehaviour
     }
 
     private void SaveData(){
+        Debug.Log(imageIndex);
         float time = (endTime - startTime);
         if(key == "space"){
             key = downData;
@@ -136,15 +143,27 @@ public class Manager : MonoBehaviour
         switch (state)
         {
             case State.Introduction:
+                if(stateEnter){
+                    stateEnter = false;
+                    startTime = Time.time;
+                }
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    state = State.Testing;
+                    ChangeState(State.Testing);
                     upImage.gameObject.SetActive(true);
                     downImage.gameObject.SetActive(true);
                     introductionText.gameObject.SetActive(false);
                 }
                 break;
             case State.Testing:
+                if(stateEnter){
+                    stateEnter = false;
+
+                    SetImage();
+                    //imageIndex++;
+                    startTime = Time.time;
+                }
+
                 if(Input.GetKeyDown(KeyCode.Space)){
                     key = "space";
                 }
@@ -155,32 +174,26 @@ public class Manager : MonoBehaviour
                 //spaceかenterが押されたら画像を更新
                 if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
                 {
+                    endTime = Time.time;
+                    SaveData();
 
                     //imageIndexが9になったら終了
-                    if (imageIndex == 9)
+                    if (imageIndex >= 8)
                     {
-                        upImage.gameObject.SetActive(false);
-                        downImage.gameObject.SetActive(false);
-                        introductionText.gameObject.SetActive(true);
-                        state = State.End;
-                        imageIndex = 0;
+                        ChangeState(State.End);
                         break;
                     }
                     else{
-                        if(startTime == 0){
-                            startTime = Time.time;
-                        }
-                        else{
-                            endTime = Time.time;
-                            SetImage();
-                            SaveData();
-                            startTime = Time.time;
-                        }
-                    imageIndex++;
+                        SetImage();
+                        imageIndex++;
                     }
+                    startTime = Time.time;
                 }
                 break;
             case State.End:
+                if(stateEnter){
+                    stateEnter = false;
+                }
                 upImage.gameObject.SetActive(false);
                 downImage.gameObject.SetActive(false);
                 introductionText.gameObject.SetActive(false);
