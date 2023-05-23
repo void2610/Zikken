@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System.Text;
+using TMPro;
 
 public class Manager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private Text outroductionText;
     [SerializeField]
-    private Text nameText;
+    private TextMeshProUGUI nameText;
     [SerializeField]
     private GameObject nameField;
     [SerializeField]
@@ -52,6 +53,15 @@ public class Manager : MonoBehaviour
         if(name == ""){
             name = "none";
         }
+
+        //name + ".csv"というファイルが存在したら、番号を追加する
+        int n = 1;
+        string originalName = name;
+        while(File.Exists(Path.Combine(Application.streamingAssetsPath, name + ".csv"))){
+            name = originalName + n.ToString();
+            n++;
+        }
+
         nameField.gameObject.SetActive(false);
         enterButton.gameObject.SetActive(false);
         introductionText.gameObject.SetActive(true);
