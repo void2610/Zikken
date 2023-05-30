@@ -1,3 +1,4 @@
+//名前空間
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Text;
 using TMPro;
 
+//クラス
 public class Manager : MonoBehaviour
 {
     [SerializeField]
@@ -23,7 +25,9 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private GameObject enterButton;
 
+    //スペースキーが押された時に入る文字列
     private string upData = "";
+    //エンターキーが押された時に入る文字列
     private string downData = "";
 
     // System.IO
@@ -31,8 +35,10 @@ public class Manager : MonoBehaviour
     //アプリケーションのパス
     private string path;
 
+    //ステータスが変わった時にtrueになる
     bool stateEnter = true;
 
+    //現在のステータスを表す列挙型
     public enum State
     {
         EnterName,
@@ -41,6 +47,7 @@ public class Manager : MonoBehaviour
         End
     }
 
+    //画像が表示されてからの時間
     private float startTime = 0;
     private float endTime = 0;
 
@@ -48,15 +55,18 @@ public class Manager : MonoBehaviour
     private string key = "none";
     private string name = "none";
 
-    //要素数9のint配列
+    //画像ファイルの名前を格納する配列(1~8ランダム)
     private int[] image = new int[8];
+    //image配列のインデックス
     private int imageIndex = 0;
 
+    //ステータスを変更する関数
     private void ChangeState(State s){
         state = s;
         stateEnter = true;
     }
 
+    //名前を入力して確定ボタンを押した時に呼ばれる関数
     public void OnClickEnterButton(){
         state = State.Introduction;
         name = nameText.text;
@@ -78,6 +88,7 @@ public class Manager : MonoBehaviour
 
     }
 
+    //画像をセットする関数
     private void SetImage(){
         Debug.Log(image[imageIndex]);
         int n = image[imageIndex];
@@ -97,6 +108,7 @@ public class Manager : MonoBehaviour
         }
     }
 
+    //データを保存する関数
     private void SaveData(){
         float time = (endTime - startTime);
         if(key == "space"){
@@ -114,6 +126,7 @@ public class Manager : MonoBehaviour
         }
     }
 
+    //開始時に呼ばれる関数
     void Start()
     {
         //image配列に1~9の数字を被りなく、ランダムに代入
@@ -130,6 +143,7 @@ public class Manager : MonoBehaviour
             }
         }
 
+        //使わないUIを非表示にする
         upImage.gameObject.SetActive(false);
         downImage.gameObject.SetActive(false);
         introductionText.gameObject.SetActive(false);
@@ -138,11 +152,13 @@ public class Manager : MonoBehaviour
         enterButton.gameObject.SetActive(true);
     }
 
-    // Update is called once per frame
+    //毎フレーム呼ばれる関数
     void Update()
     {
+        //stateパターン
         switch (state)
         {
+            //説明が表示されるステータス
             case State.Introduction:
                 if(stateEnter){
                     stateEnter = false;
@@ -156,6 +172,7 @@ public class Manager : MonoBehaviour
                     introductionText.gameObject.SetActive(false);
                 }
                 break;
+            //実験が行われるステータス
             case State.Testing:
                 if(stateEnter){
                     stateEnter = false;
@@ -191,6 +208,7 @@ public class Manager : MonoBehaviour
                     startTime = Time.time;
                 }
                 break;
+            //終了時のステータス
             case State.End:
                 if(stateEnter){
                     stateEnter = false;
